@@ -22,19 +22,12 @@ import (
 	"flag"
 	"fmt"
 	"net/http"
-	"os"
 	"time"
 
-	// election "k8s.io/contrib/election/lib"
-
 	"github.com/golang/glog"
-	// flag "github.com/spf13/pflag"
-	// "k8s.io/kubernetes/pkg/api"
-	// "k8s.io/kubernetes/pkg/client/restclient"
-	// client "k8s.io/kubernetes/pkg/client/unversioned"
-	// kubectl_util "k8s.io/kubernetes/pkg/kubectl/cmd/util"
 
-	api_meta_v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
 
@@ -42,15 +35,11 @@ import (
 )
 
 var (
-	flags = flag.NewFlagSet(
-		`elector --election=<name>`,
-		flag.ExitOnError)
-	name      = flags.String("election", "", "The name of the election")
-	id        = flags.String("id", "", "The id of this participant")
-	namespace = flags.String("election-namespace", api_meta_v1.NamespaceDefault, "The Kubernetes namespace for this election")
-	ttl       = flags.Duration("ttl", 10*time.Second, "The TTL for this election's lease duration")
-	inCluster = flags.Bool("use-cluster-credentials", false, "Should this request use cluster credentials?")
-	addr      = flags.String("http", "", "If non-empty, stand up a simple webserver that reports the leader state")
+	name      = flag.String("election", "", "The name of the election")
+	namespace = flag.String("election-namespace", metav1.NamespaceDefault, "The Kubernetes namespace for this election")
+	ttl       = flag.Duration("ttl", 10*time.Second, "The TTL for this election's lease duration")
+	inCluster = flag.Bool("use-cluster-credentials", false, "Should this request use cluster credentials?")
+	addr      = flag.String("http", "", "If non-empty, stand up a simple webserver that reports the leader state")
 
 	leader = &LeaderData{}
 )
@@ -91,16 +80,16 @@ func webHandler(res http.ResponseWriter, req *http.Request) {
 }
 
 func validateFlags() {
-	if len(*id) == 0 {
-		glog.Fatal("--id cannot be empty")
-	}
 	if len(*name) == 0 {
 		glog.Fatal("--election cannot be empty")
 	}
 }
 
+func init() {
+	flag.Parse()
+}
+
 func main() {
-	flags.Parse(os.Args)
 	validateFlags()
 
 	kubeClient, err := makeClient()
@@ -113,7 +102,7 @@ func main() {
 		fmt.Printf("%s is the leader\n", leader.Name)
 	}
 
-	e, err := pkg_election.New(*id, *name, *namespace, *ttl, fn, kubeClient)
+	e, err := pkg_election.New(*name, *namespace, *ttl, fn, kubeClient)
 	if err != nil {
 		glog.Fatalf("failed to create election: %v", err)
 	}

@@ -37,7 +37,7 @@ func getCurrentLeader(electionId, namespace string, c kubernetes.Interface) (str
 	return electionRecord.HolderIdentity, endpoints, err
 }
 
-func New(id, name, namespace string, ttl time.Duration, callback func(leader string), kubeClient kubernetes.Interface) (*election.LeaderElector, error) {
+func New(name, namespace string, ttl time.Duration, callback func(leader string), kubeClient kubernetes.Interface) (*election.LeaderElector, error) {
 	var (
 		err      error
 		hostname string
@@ -69,10 +69,10 @@ func New(id, name, namespace string, ttl time.Duration, callback func(leader str
 	}
 	callbacks := election.LeaderCallbacks{
 		OnStartedLeading: func(context.Context) {
-			callback(id)
+			callback(hostname)
 		},
 		OnStoppedLeading: func() {
-			leader, _, err := getCurrentLeader(id, namespace, kubeClient)
+			leader, _, err := getCurrentLeader(hostname, namespace, kubeClient)
 			if err != nil {
 				glog.Errorf("failed to get leader: %v", err)
 				// empty string means leader is unknown
