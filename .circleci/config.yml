@@ -11,7 +11,7 @@ jobs:
       - run:
           name: Build the server binary and docker image
           command: |
-            docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
+            docker login -u "${DOCKER_USERNAME}" -p "${DOCKER_PASSWORD}"
             make docker-build
             make docker-push
 
