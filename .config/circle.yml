@@ -1,0 +1,29 @@
+version: 2.1
+
+jobs:
+  build_deploy:
+    working_directory: /go/src/github.com/naemono/leader-elector
+    docker:
+      - image: circleci/golang:1.14
+    steps:
+      - checkout
+      - setup_remote_docker
+      - run:
+          name: Build the server binary and docker image
+          command: |
+            docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
+            make docker-build
+            make docker-push
+
+workflows:
+  version: 2
+  deploy:
+    jobs:
+      - build_deploy:
+          filters:
+            tags:
+              only:
+                - /^[0-9]+.[0-9]+.[0-9]+$/
+                - /^[0-9]+.[0-9]+.[0-9]+-rc[0-9]+$/
+            branches:
+              ignore: /.*/
