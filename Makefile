@@ -2,7 +2,7 @@ all: push
 
 # Docker Image URL to use all building/pushing image targets
 VERSION ?= latest
-PREFIX ?= naemono
+PREFIX ?= mmontg1
 NAME := leader-elector
 IMG := $(PREFIX)/$(NAME):$(VERSION)
 
