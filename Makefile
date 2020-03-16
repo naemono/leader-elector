@@ -1,18 +1,19 @@
 all: push
 
-# 0.0 shouldn't clobber any released builds
-# current latest is 0.5
-TAG = 0.0
-PREFIX = naemono/leader-elector
+# Docker Image URL to use all building/pushing image targets
+VERSION ?= latest
+PREFIX ?= naemono
+NAME := leader-elector
+IMG := $(PREFIX)/$(NAME):$(VERSION)
 
 server:
 	CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -ldflags '-w' -o server main.go
 
-container: server
-	docker build --pull -t $(PREFIX):$(TAG) .
+docker-build: server
+	docker build --pull -t ${IMG} .
 
-push: container
-	docker push $(PREFIX):$(TAG)
+docker-push: container
+	docker push ${IMG}
 
 clean:
 	rm -f server
