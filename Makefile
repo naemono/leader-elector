@@ -12,7 +12,7 @@ server:
 docker-build: server
 	docker build --pull -t ${IMG} .
 
-docker-push: container
+docker-push:
 	docker push ${IMG}
 
 clean:
