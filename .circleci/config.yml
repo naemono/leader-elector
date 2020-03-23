@@ -13,7 +13,7 @@ jobs:
           command: |
             docker login -u "${DOCKER_USERNAME}" -p "${DOCKER_PASSWORD}"
             make docker-build
-            make docker-push
+            VERSION=${CIRCLE_TAG} make docker-push
 
 workflows:
   version: 2

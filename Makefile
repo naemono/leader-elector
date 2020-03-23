@@ -14,6 +14,7 @@ docker-build: server
 
 docker-push:
 	docker push ${IMG}
+	docker push $(PREFIX)/$(NAME):latest
 
 clean:
 	rm -f server
