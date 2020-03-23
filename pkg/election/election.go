@@ -72,7 +72,7 @@ func New(name, namespace string, ttl time.Duration, callback func(leader string)
 			callback(hostname)
 		},
 		OnStoppedLeading: func() {
-			leader, _, err := getCurrentLeader(hostname, namespace, kubeClient)
+			leader, _, err := getCurrentLeader(name, namespace, kubeClient)
 			if err != nil {
 				glog.Errorf("failed to get leader: %v", err)
 				// empty string means leader is unknown

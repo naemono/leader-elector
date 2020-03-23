@@ -10,10 +10,11 @@ server:
 	CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -ldflags '-w' -o server main.go
 
 docker-build: server
-	docker build --pull -t ${IMG} .
+	docker build --pull -t ${IMG} -t $(PREFIX)/$(NAME):latest .
 
 docker-push:
 	docker push ${IMG}
+	docker push $(PREFIX)/$(NAME):latest
 
 clean:
 	rm -f server
