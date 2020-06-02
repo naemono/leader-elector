@@ -59,7 +59,7 @@ func New(name, namespace string, ttl time.Duration, callback func(leader string)
 			Host:      hostname,
 		})
 	resourceLockConfig := rl.ResourceLockConfig{
-		Identity:      name,
+		Identity:      hostname,
 		EventRecorder: recorder,
 	}
 	lock := &rl.EndpointsLock{
